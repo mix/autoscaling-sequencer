@@ -4,6 +4,4 @@ __version__ = '0.1.0'
 
 import logging
 
-from logging import FileHandler
-
-logging.getLogger(__name__).addHandler(FileHandler(filename='sequencer.log'))
+logging.basicConfig(filename='sequencer.log', level=logging.DEBUG)
