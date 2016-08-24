@@ -53,14 +53,13 @@ class DistributedSequenceCoordinator(object):
                 except Exception as e:
                     logging.debug(e)
                     self.log_msg('encountered zk exception')
-                    result = None
                 finally:
                     self.log_msg('stopping zk')
                     self.zk.stop()
         except Exception as e:
             raise e
 
-        if not result:
+        if result is None:
             raise Exception('Unable to generate sequence id')
 
         return result
@@ -75,8 +74,11 @@ class DistributedSequenceCoordinator(object):
             instance_id = self.zk.get(instance_node_path)[0]
             zk_instance_sequencers[str(instance_id)] = int(instance_node)
 
-        instance_sequencers = {k: v for k, v in zk_instance_sequencers.items() if
-                               k in self.asg_instances_ids}
+        logging.debug('zk instances: {0}'.format(zk_instance_sequencers))
+
+        instance_sequencers = {k: v for k, v in zk_instance_sequencers.items() if k in self.asg_instances_ids}
+
+        logging.debug('active instances with assigned sequences: {0}'.format(instance_sequencers))
 
         generator = SequenceStrategy(self.strategy_name,
                                      self.instance_id,
@@ -85,17 +87,8 @@ class DistributedSequenceCoordinator(object):
 
         sequence_id = generator.get_sequence_id()
         current_instance_node_path = "/".join([instances_root_path, str(sequence_id)])
-        try:
-            self.zk.create(path=current_instance_node_path,
-                           value=str.encode(str(self.instance_id)),
-                           ephemeral=False,
-                           makepath=True)
-        except NodeExistsError:
-            self.zk.delete(current_instance_node_path)
-            self.zk.create(path=current_instance_node_path,
-                           value=str.encode(str(self.instance_id)),
-                           ephemeral=False,
-                           makepath=True)
+        self.zk.ensure_path(current_instance_node_path)
+        self.zk.set(current_instance_node_path, str.encode(str(self.instance_id)))
         self.running = False
         return sequence_id
 

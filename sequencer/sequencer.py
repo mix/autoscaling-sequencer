@@ -1,6 +1,7 @@
 import boto
 import boto.ec2
 import boto.ec2.autoscale
+import logging
 
 from coordinator import DistributedSequenceCoordinator
 
@@ -20,6 +21,8 @@ class Sequencer(object):
                 boto.ec2.autoscale.connect_to_region(self.aws_region).get_all_groups([self.autoscaling_grp_name])[0]
 
             asg_instances_ids = [i.instance_id for i in autoscaling_grp.instances]
+            logging.debug('found instances: {0} in autoscaling grp: {1}'.format(
+                asg_instances_ids, self.autoscaling_grp_name))
             if self.instance_id not in asg_instances_ids:
                 raise RuntimeError('{0} instance does not exists in {1} autoscaling_group'
                                    .format(self.instance_id, self.autoscaling_grp_name))
