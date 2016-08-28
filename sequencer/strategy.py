@@ -27,7 +27,10 @@ class SequenceStrategy(object):
             raise NotImplementedError('Unable to find strategy to execute for {0}'.format(self.strategy_name))
 
     def __choose_last_used_sequence_id__(self):
-        max_assigned_sequence = max(self.instance_sequences.values())
+        if len(self.instance_sequences.values()):
+            max_assigned_sequence = max(self.instance_sequences.values())
+        else:
+            max_assigned_sequence = -1
 
         # if still less than max id, then increment & return
         if max_assigned_sequence < self.max_sequence_id:
