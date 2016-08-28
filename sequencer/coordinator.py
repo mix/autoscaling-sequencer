@@ -1,8 +1,6 @@
 import logging
 
-from kazoo.exceptions import NodeExistsError
 from kazoo.client import KazooClient, KazooState
-
 from constants import zk_sequencer_root
 from strategy import SequenceStrategy
 
@@ -32,6 +30,7 @@ class DistributedSequenceCoordinator(object):
      concurrency control by assuming that operation would be executed without any interruption, and if any interruption
      occurs, then acquires a new lock and re-execute the idempotent operation to guarantee isolation.
     """
+
     def execute(self):
         result = None
 
@@ -51,7 +50,7 @@ class DistributedSequenceCoordinator(object):
                     with lock:
                         result = self.operation()
                 except Exception as e:
-                    logging.debug(e)
+                    logging.exception(e)
                     self.log_msg('encountered zk exception')
                 finally:
                     self.log_msg('stopping zk')
