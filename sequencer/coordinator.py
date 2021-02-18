@@ -1,8 +1,8 @@
 import logging
 
 from kazoo.client import KazooClient, KazooState
-from constants import zk_sequencer_root
-from strategy import SequenceStrategy
+from .constants import zk_sequencer_root
+from .strategy import SequenceStrategy
 
 
 class DistributedSequenceCoordinator(object):
@@ -75,7 +75,7 @@ class DistributedSequenceCoordinator(object):
 
         logging.debug('zk instances: {0}'.format(zk_instance_sequencers))
 
-        instance_sequencers = {k: v for k, v in zk_instance_sequencers.items() if k in self.asg_instances_ids}
+        instance_sequencers = {k: v for k, v in list(zk_instance_sequencers.items()) if k in self.asg_instances_ids}
 
         logging.debug('active instances with assigned sequences: {0}'.format(instance_sequencers))
 

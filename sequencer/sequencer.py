@@ -3,7 +3,7 @@ import boto.ec2
 import boto.ec2.autoscale
 import logging
 
-from coordinator import DistributedSequenceCoordinator
+from .coordinator import DistributedSequenceCoordinator
 
 
 class Sequencer(object):

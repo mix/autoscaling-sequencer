@@ -1,5 +1,5 @@
 import unittest
-from strategy import SequenceStrategy
+from .strategy import SequenceStrategy
 
 last_used_strategy = 'last-used'
 first_available_strategy = 'first-available'

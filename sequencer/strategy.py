@@ -27,7 +27,7 @@ class SequenceStrategy(object):
             raise NotImplementedError('Unable to find strategy to execute for {0}'.format(self.strategy_name))
 
     def __choose_last_used_sequence_id__(self):
-        if len(self.instance_sequences.values()):
+        if len(list(self.instance_sequences.values())):
             max_assigned_sequence = max(self.instance_sequences.values())
         else:
             max_assigned_sequence = -1
@@ -46,8 +46,8 @@ class SequenceStrategy(object):
             return 0
 
         # else find the smallest missing value not used
-        complete_sequences = [i for i in xrange(self.max_sequence_id)]
-        missing_values = [x for x in complete_sequences if x not in self.instance_sequences.values()]
+        complete_sequences = [i for i in range(self.max_sequence_id)]
+        missing_values = [x for x in complete_sequences if x not in list(self.instance_sequences.values())]
 
         if not missing_values:
             logging.error('Unable to generate sequence_id since all ids are in use')
