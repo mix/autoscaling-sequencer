@@ -71,7 +71,7 @@ class DistributedSequenceCoordinator(object):
         for instance_node in instance_nodes:
             instance_node_path = "/".join([instances_root_path, instance_node])
             instance_id = self.zk.get(instance_node_path)[0]
-            zk_instance_sequencers[str(instance_id)] = int(instance_node)
+            zk_instance_sequencers[instance_id.decode("utf-8")] = int(instance_node)
 
         logging.debug('zk instances: {0}'.format(zk_instance_sequencers))
 
